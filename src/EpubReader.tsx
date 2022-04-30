@@ -5,10 +5,11 @@ import {
   ReactReaderStyle
 } from "react-reader";
 
-export const EpubReader = ({ contents, title, scrolled }: {
+export const EpubReader = ({ contents, title, scrolled, tocOffset }: {
   contents: ArrayBuffer;
   title: string;
   scrolled: boolean;
+  tocOffset: number;
 }) => {
   const [location, setLocation] = useState(null);
   const locationChanged = (epubcifi: string | number) => setLocation(epubcifi);
@@ -30,8 +31,8 @@ export const EpubReader = ({ contents, title, scrolled }: {
           ...ReactReaderStyle,
           tocArea: {
             ...ReactReaderStyle.tocArea,
-            top: 20,
-            bottom: 20,
+            top: (tocOffset + 20).toString() + 'px',
+            bottom: "20px",
             left: 'auto',
             backgroundColor: 'currentColor',
           },

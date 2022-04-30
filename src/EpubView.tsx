@@ -18,10 +18,18 @@ export class EpubView extends FileView {
   async onLoadFile(file: TFile): Promise<void> {
     ReactDOM.unmountComponentAtNode(this.contentEl);
     this.contentEl.empty();
+    const style = getComputedStyle(this.containerEl.parentElement.querySelector('div.view-header'));
+    const width = parseFloat(style.width);
+    const height = parseFloat(style.height);
+    const tocOffset = height < width ? height : 0;
 
     this.app.vault.adapter.readBinary(file.path).then((contents) => {
       ReactDOM.render(
-        <EpubReader contents={contents} title={file.basename} scrolled={this.settings.scrolledView}/>,
+        <EpubReader
+         contents={contents}
+         title={file.basename}
+         scrolled={this.settings.scrolledView}
+         tocOffset={tocOffset}/>,
         this.contentEl
       );
     });
