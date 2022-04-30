@@ -1,3 +1,5 @@
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/caronchen/obsidian-epub-plugin) ![GitHub all releases](https://img.shields.io/github/downloads/caronchen/obsidian-epub-plugin/total) ![GitHub Release Date](https://img.shields.io/github/release-date/caronchen/obsidian-epub-plugin) ![GitHub last commit](https://img.shields.io/github/last-commit/caronchen/obsidian-epub-plugin)
+
 ## Obsidian ePub Reader Plugin
 
 This is an ePub reader plugin for Obsidian (https://obsidian.md). Can open document with `.epub` file extension.
