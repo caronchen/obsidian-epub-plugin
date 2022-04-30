@@ -4,6 +4,13 @@
 
 This is an ePub reader plugin for Obsidian (https://obsidian.md). Can open document with `.epub` file extension.
 
+- [Obsidian ePub Reader Plugin](#obsidian-epub-reader-plugin)
+  - [How to use](#how-to-use)
+    - [1. Put books into any vault folder](#1-put-books-into-any-vault-folder)
+    - [2. Click book to open an epub view](#2-click-book-to-open-an-epub-view)
+    - [3. Reading](#3-reading)
+  - [Manually installing the plugin](#manually-installing-the-plugin)
+
 ### How to use
 
 #### 1. Put books into any vault folder
