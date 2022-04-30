@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import {
   ReactReader,
+  //@ts-ignore
   ReactReaderStyle
 } from "react-reader";
 
