@@ -24,6 +24,7 @@ export class EpubSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Scrolled View")
+			.setDesc("This enables seamless scrolling between pages.")
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.scrolledView)
 				.onChange(async (value) => {

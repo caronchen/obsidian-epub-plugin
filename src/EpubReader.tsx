@@ -1,10 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import {
-  ReactReader,
-  //@ts-ignore
-  ReactReaderStyle
-} from "react-reader";
+import { ReactReader, ReactReaderStyle } from "react-reader";
 
 export const EpubReader = ({ contents, title, scrolled, tocOffset }: {
   contents: ArrayBuffer;
