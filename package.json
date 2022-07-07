@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-epub-plugin",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "This is an ePub reader plugin for Obsidian. Can open document with \".epub\" file extension.",
 	"main": "src/main.js",
 	"scripts": {

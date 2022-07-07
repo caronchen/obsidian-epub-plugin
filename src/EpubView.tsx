@@ -1,4 +1,4 @@
-import { WorkspaceLeaf, FileView, TFile } from "obsidian";
+import { WorkspaceLeaf, FileView, TFile, Menu, moment } from "obsidian";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { EpubPluginSettings } from "./EpubPluginSettings";
@@ -15,6 +15,49 @@ export class EpubView extends FileView {
     super(leaf);
   }
 
+  onMoreOptionsMenu(menu: Menu): void {
+    menu.addItem((item) => {
+      item
+        .setTitle("Create new epub note")
+        .setIcon("document")
+        .onClick(async () => {
+          const fileName = this.getFileName();
+          let file = this.app.vault.getAbstractFileByPath(fileName);
+          if (file == null || !(file instanceof TFile)) {
+            file = await this.app.vault.create(fileName, this.getFileContent());
+          }
+          const fileLeaf = this.app.workspace.createLeafBySplit(this.leaf);
+          fileLeaf.openFile(file as TFile, {
+            active: true
+          });
+        });
+    });
+    menu.addSeparator();
+    super.onMoreOptionsMenu(menu);
+  }
+
+  getFileName() {
+    let filePath;
+    if (this.settings.useSameFolder) {
+      filePath = `${this.file.parent.path}/`;
+    } else {
+      filePath = this.settings.notePath.endsWith('/')
+        ? this.settings.notePath
+        : `${this.settings.notePath}/`;
+    }
+    return `${filePath}${this.file.basename}.md`;
+  }
+
+  getFileContent() {
+    return `---
+Tags: ${this.settings.tags}
+Date: ${moment().toLocaleString()}
+---
+
+# ${this.file.basename}
+`;
+  }
+
   async onLoadFile(file: TFile): Promise<void> {
     ReactDOM.unmountComponentAtNode(this.contentEl);
     this.contentEl.empty();
@@ -23,16 +66,15 @@ export class EpubView extends FileView {
     const height = parseFloat(style.height);
     const tocOffset = height < width ? height : 0;
 
-    this.app.vault.adapter.readBinary(file.path).then((contents) => {
-      ReactDOM.render(
-        <EpubReader
-         contents={contents}
-         title={file.basename}
-         scrolled={this.settings.scrolledView}
-         tocOffset={tocOffset}/>,
-        this.contentEl
-      );
-    });
+    const contents = await this.app.vault.adapter.readBinary(file.path);
+    ReactDOM.render(
+      <EpubReader
+        contents={contents}
+        title={file.basename}
+        scrolled={this.settings.scrolledView}
+        tocOffset={tocOffset} />,
+      this.contentEl
+    );
   }
 
   onunload(): void {

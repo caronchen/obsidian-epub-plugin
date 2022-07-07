@@ -29,7 +29,7 @@ export const EpubReader = ({ contents, title, scrolled, tocOffset }: {
           tocArea: {
             ...ReactReaderStyle.tocArea,
             top: (tocOffset + 20).toString() + 'px',
-            bottom: "20px",
+            bottom: 0,
             left: 'auto',
             backgroundColor: 'currentColor',
           },
