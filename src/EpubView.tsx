@@ -61,10 +61,16 @@ Date: ${moment().toLocaleString()}
   async onLoadFile(file: TFile): Promise<void> {
     ReactDOM.unmountComponentAtNode(this.contentEl);
     this.contentEl.empty();
-    const style = getComputedStyle(this.containerEl.parentElement.querySelector('div.view-header'));
-    const width = parseFloat(style.width);
-    const height = parseFloat(style.height);
-    const tocOffset = height < width ? height : 0;
+    const viewHeaderStyle = getComputedStyle(this.containerEl.parentElement.querySelector('div.view-header'));
+    const viewHeaderHeight = parseFloat(viewHeaderStyle.height);
+    const viewHeaderWidth = parseFloat(viewHeaderStyle.width);
+
+    const viewContentStyle = getComputedStyle(this.containerEl.parentElement.querySelector('div.view-content'));
+    const viewContentPaddingBottom = parseFloat(viewContentStyle.paddingBottom);
+    const viewContentPaddingTop = parseFloat(viewContentStyle.paddingTop);
+
+    const tocOffset = (viewHeaderHeight < viewHeaderWidth ? viewHeaderHeight : 0) + viewContentPaddingTop + 1;
+    const tocBottomOffset = viewContentPaddingBottom;
 
     const contents = await this.app.vault.adapter.readBinary(file.path);
     ReactDOM.render(
@@ -72,7 +78,9 @@ Date: ${moment().toLocaleString()}
         contents={contents}
         title={file.basename}
         scrolled={this.settings.scrolledView}
-        tocOffset={tocOffset} />,
+        tocOffset={tocOffset}
+        tocBottomOffset={tocBottomOffset}
+        leaf={this.leaf} />,
       this.contentEl
     );
   }

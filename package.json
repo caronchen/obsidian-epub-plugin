@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-epub-plugin",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "This is an ePub reader plugin for Obsidian. Can open document with \".epub\" file extension.",
 	"main": "src/main.js",
 	"scripts": {
@@ -8,12 +8,12 @@
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-  "keywords": [
-    "epub",
-    "obsidian",
-    "obsidian-plugin"
-  ],
-	"author": "",
+	"keywords": [
+		"epub",
+		"obsidian",
+		"obsidian-plugin"
+	],
+	"author": "caronchen",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",
@@ -30,6 +30,6 @@
 	"dependencies": {
 		"react": "npm:@preact/compat@^17.0.3",
 		"react-dom": "npm:@preact/compat@^17.0.3",
-		"react-reader": "^0.21.1"
+		"react-reader": "^1.0.2"
 	}
 }
