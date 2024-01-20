@@ -1,7 +1,8 @@
 import { WorkspaceLeaf } from "obsidian";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
-import { ReactReader, ReactReaderStyle } from "react-reader";
+import { ReactReader, ReactReaderStyle, type IReactReaderStyle } from "react-reader";
+import type { Contents, Rendition } from 'epubjs';
 
 export const EpubReader = ({ contents, title, scrolled, tocOffset, tocBottomOffset, leaf }: {
   contents: ArrayBuffer;
@@ -11,58 +12,116 @@ export const EpubReader = ({ contents, title, scrolled, tocOffset, tocBottomOffs
   tocBottomOffset: number;
   leaf: WorkspaceLeaf;
 }) => {
-  const [location, setLocation] = useState(null);
-  const renditionRef = useRef(null);
+  const [location, setLocation] = useState<string | number | null>(null);
+  const renditionRef = useRef<Rendition | null>(null);
+
+  type ITheme = 'light' | 'dark';
+
+  const isDarkMode = document.body.classList.contains('theme-dark');
+
   const locationChanged = (epubcifi: string | number) => setLocation(epubcifi);
 
+  const updateTheme = (rendition: Rendition, theme: ITheme) => {
+    const themes = rendition.themes;
+    if (theme === 'dark') {
+      themes.override('color', '#fff');
+      themes.override('background', '#000');
+    } else {
+      themes.override('color', '#000');
+      themes.override('background', '#fff');
+    }
+  };
+
   useEffect(() => {
-    leaf.view.app.workspace.on('resize', () => {
+    const handleResize = () => {
       const epubContainer = leaf.view.containerEl.querySelector('div.epub-container');
-      if (epubContainer == null) {
-        return;
-      }
-  
+      if (!epubContainer) return;
+
       const viewContentStyle = getComputedStyle(epubContainer.parentElement);
-      renditionRef.current?.resize(parseFloat(viewContentStyle.width), parseFloat(viewContentStyle.height));
-    })
+      renditionRef.current?.resize(
+        parseFloat(viewContentStyle.width),
+        parseFloat(viewContentStyle.height)
+      );
+    };
+
+    leaf.view.app.workspace.on('resize', handleResize);
+
+    return () => leaf.view.app.workspace.off('resize', handleResize);
   }, [leaf]);
 
-  return <div style={{ height: "100vh" }}>
-    <ReactReader
-      title={title}
-      showToc={true}
-      location={location}
-      locationChanged={locationChanged}
-      swipeable={false}
-      url={contents}
-      getRendition={rendition => renditionRef.current = rendition}
-      epubOptions={scrolled ? {
-        allowPopups: true,
-        flow: "scrolled",
-        manager: "continuous",
-      } : undefined}
-      readerStyles={
-        {
-          ...ReactReaderStyle,
-          arrow: {
-            ...ReactReaderStyle.arrow,
-            boxShadow: 'none'
-          },
-          tocArea: {
-            ...ReactReaderStyle.tocArea,
-            top: tocOffset.toString() + 'px',
-            bottom: tocBottomOffset.toString() + 'px',
-            left: 'auto',
-            backgroundColor: 'currentColor',
-            height: 'auto',
-            whiteSpace: 'unset',
-          },
-          tocButtonExpanded: {
-            ...ReactReaderStyle.tocButtonExpanded,
-            backgroundColor: 'currentColor',
+  return (
+    <div style={{ height: "100vh" }}>
+      <ReactReader
+        title={title}
+        showToc={true}
+        location={location}
+        locationChanged={locationChanged}
+        swipeable={false}
+        url={contents}
+        getRendition={rendition => {
+          renditionRef.current = rendition;
+          rendition.hooks.content.register((contents: Contents) => {
+            const body = contents.window.document.querySelector('body');
+            if (body) {
+              body.oncontextmenu = () => false;
+            }
+          });
+          if (isDarkMode) {
+            updateTheme(rendition, 'dark');
           }
-        }
-      }
-    />
-  </div>;
-}
+        }}
+        epubOptions={scrolled ? {
+          allowPopups: true,
+          flow: "scrolled",
+          manager: "continuous",
+        } : undefined}
+        readerStyles={isDarkMode ? darkReaderTheme : lightReaderTheme}
+      />
+    </div>
+  );
+};
+
+const lightReaderTheme: IReactReaderStyle = {
+  ...ReactReaderStyle,
+  readerArea: {
+    ...ReactReaderStyle.readerArea,
+    transition: undefined,
+  },
+};
+
+const darkReaderTheme: IReactReaderStyle = {
+  ...ReactReaderStyle,
+  arrow: {
+    ...ReactReaderStyle.arrow,
+    color: 'white',
+  },
+  arrowHover: {
+    ...ReactReaderStyle.arrowHover,
+    color: '#ccc',
+  },
+  readerArea: {
+    ...ReactReaderStyle.readerArea,
+    backgroundColor: '#000',
+    transition: undefined,
+  },
+  titleArea: {
+    ...ReactReaderStyle.titleArea,
+    color: '#ccc',
+  },
+  tocArea: {
+    ...ReactReaderStyle.tocArea,
+    background: '#111',
+  },
+  tocButtonExpanded: {
+    ...ReactReaderStyle.tocButtonExpanded,
+    background: '#222',
+  },
+  tocButtonBar: {
+    ...ReactReaderStyle.tocButtonBar,
+    background: '#fff',
+  },
+  tocButton: {
+    ...ReactReaderStyle.tocButton,
+    color: 'white',
+  },
+};
