@@ -31,6 +31,7 @@
 		"epubjs": "^0.3.93",
 		"react": "npm:@preact/compat@^17.0.3",
 		"react-dom": "npm:@preact/compat@^17.0.3",
-		"react-reader": "^1.0.2"
+		"react-reader": "^1.0.2",
+		"use-local-storage-state": "^17.3.0"
 	}
 }
