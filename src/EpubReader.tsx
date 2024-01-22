@@ -13,7 +13,7 @@ export const EpubReader = ({ contents, title, scrolled, tocOffset, tocBottomOffs
   tocBottomOffset: number;
   leaf: WorkspaceLeaf;
 }) => {
-  const [location, setLocation] = useLocalStorageState<string | number>('persist-location', { defaultValue: 0 });
+  const [location, setLocation] = useLocalStorageState<string | number>(`epub-${title}`, { defaultValue: 0 });
   const renditionRef = useRef<Rendition | null>(null);
   const [fontSize, setFontSize] = useState(100); 
 
