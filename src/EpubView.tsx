@@ -15,7 +15,7 @@ export class EpubView extends FileView {
     super(leaf);
   }
 
-  onMoreOptionsMenu(menu: Menu): void {
+  onPaneMenu(menu: Menu, source: 'more-options' | 'tab-header' | string): void {
     menu.addItem((item) => {
       item
         .setTitle("Create new epub note")
@@ -33,7 +33,7 @@ export class EpubView extends FileView {
         });
     });
     menu.addSeparator();
-    super.onMoreOptionsMenu(menu);
+    super.onPaneMenu(menu, source);
   }
 
   getFileName() {
