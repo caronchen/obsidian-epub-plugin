@@ -6,5 +6,6 @@
 	"description": "This is an ePub reader plugin for Obsidian. Can open document with \".epub\" file extension.",
 	"author": "caronchen",
 	"authorUrl": "https://github.com/caronchen/obsidian-epub-plugin",
-	"isDesktopOnly": false
+	"isDesktopOnly": false,
+	"fundingUrl": "https://paypal.me/caronchenhz"
 }
