@@ -15,9 +15,19 @@ export const EpubReader = ({ contents, title, scrolled, tocOffset, tocBottomOffs
 }) => {
   const [location, setLocation] = useLocalStorageState<string | number>(`epub-${title}`, { defaultValue: 0 });
   const renditionRef = useRef<Rendition | null>(null);
-  const [fontSize, setFontSize] = useState(100); 
+  const [fontSize, setFontSize] = useState(100);
 
-  const isDarkMode = document.body.classList.contains('theme-dark');
+  const readDarkMode = () => document.body.classList.contains('theme-dark');
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(readDarkMode);
+
+  // Subscribe to Obsidian's light/dark theme switches by watching the
+  // `theme-dark` class on document.body, so toggling the theme after the
+  // epub is already open also updates the reader.
+  useEffect(() => {
+    const observer = new MutationObserver(() => setIsDarkMode(readDarkMode()));
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   const locationChanged = useCallback((epubcifi: string | number) => {
     setLocation(epubcifi);
@@ -28,6 +38,14 @@ export const EpubReader = ({ contents, title, scrolled, tocOffset, tocBottomOffs
     themes.override('color', theme === 'dark' ? '#fff' : '#000');
     themes.override('background', theme === 'dark' ? '#000' : '#fff');
   }, []);
+
+  // Re-apply the epub content theme whenever the active theme changes, even
+  // after the rendition has already been created.
+  useEffect(() => {
+    if (renditionRef.current) {
+      updateTheme(renditionRef.current, isDarkMode ? 'dark' : 'light');
+    }
+  }, [isDarkMode, updateTheme]);
 
   const updateFontSize = useCallback((size: number) => {
     renditionRef.current?.themes.fontSize(`${size}%`);
